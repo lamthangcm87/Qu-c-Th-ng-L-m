@@ -1,0 +1,6 @@
+{
+  "name": "Hệ thống Quản lý Công việc",
+  "description": "Ứng dụng quản lý nhân sự và công việc với các vai trò Quản lý, Thực thi và Giám sát.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
