@@ -53,8 +53,19 @@ async function startServer() {
 
   // API Routes
   app.get('/api/users', (req, res) => {
-    const users = db.prepare('SELECT * FROM Users').all();
+    const users = db.prepare('SELECT * FROM Users ORDER BY full_name ASC').all();
     res.json(users);
+  });
+
+  app.post('/api/users', (req, res) => {
+    const { full_name, role_type } = req.body;
+    try {
+      const stmt = db.prepare('INSERT INTO Users (full_name, role_type) VALUES (?, ?)');
+      const info = stmt.run(full_name, role_type);
+      res.json({ id: info.lastInsertRowid });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
   app.get('/api/tasks', (req, res) => {
