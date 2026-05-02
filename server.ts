@@ -68,6 +68,20 @@ async function startServer() {
     }
   });
 
+  app.delete('/api/users/:id', (req, res) => {
+    const { id } = req.params;
+    try {
+      // Logic: Xoá user. SQLite sẽ tự động set NULL cho các cột Foreign Key nếu được config 
+      // hoặc ta có thể chủ động cập nhật các Task liên quan về NULL trước khi xoá.
+      // Ở đây đơn giản là xoá user khỏi bảng Users.
+      const stmt = db.prepare('DELETE FROM Users WHERE user_id = ?');
+      stmt.run(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get('/api/tasks', (req, res) => {
     const tasks = db.prepare(`
       SELECT 

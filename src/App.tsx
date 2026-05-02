@@ -10,7 +10,8 @@ import {
   AlertCircle,
   TrendingUp,
   LayoutDashboard,
-  ClipboardList
+  ClipboardList,
+  Trash2
 } from 'lucide-react';
 
 interface User {
@@ -137,6 +138,21 @@ export default function App() {
       console.error('Error submitting user:', error);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    if (!confirm('Bạn có chắc chắn muốn xoá nhân sự này? Điều này có thể làm trống thông tin trong các công việc họ đảm nhiệm.')) return;
+    
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await fetchData();
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -408,6 +424,7 @@ export default function App() {
                         <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Họ và tên</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Vai trò</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Thống kê</th>
+                        <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Thao tác</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -425,6 +442,15 @@ export default function App() {
                           </td>
                           <td className="px-6 py-4 text-sm text-slate-500">
                             {tasks.filter(t => t.manager_id === user.user_id || t.assignee_id === user.user_id || t.supervisor_id === user.user_id).length} công việc
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button 
+                              onClick={() => handleDeleteUser(user.user_id)}
+                              className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                              title="Xoá nhân sự"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       ))}
